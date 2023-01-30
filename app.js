@@ -108,7 +108,7 @@ app.put("/update-movie/:titleToUpdate", (req, res)=> {
 	})
     let originalMovie = favoriteMovieList[originalMovieIndex];
 
-    let updatedMovie =[];
+    let updatedMovie ={};
 
 
     if(req.body.title !== undefined){
