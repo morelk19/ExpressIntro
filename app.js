@@ -25,24 +25,35 @@ app.get('/', (req, res) => {
 })
 
 app.get("/all-movies", (req, res)=>{
-	const allMovies = favoriteMovieList
+
+    const starRating = parseInt(req.query.starRating);
+
+    if(req.query.starRating === undefined){
+        res.json({
+            success: true,
+            favoriteMovieList: favoriteMovieList
+        })
+        return;
+    }
+
+    
+    if (typeof(starRating) !== "number"){
+        res.json({
+            success: false,
+            message: "Star Rating must be a number."
+        })
+        return;
+    }
+	const filteredMovies = favoriteMovieList.filter((movies)=>{
+        return movies.starRating < starRating
+    })
 
 	res.json({
 		success: true,
-		allMovies: allMovies
+		filteredMovies: filteredMovies
 	})
 })
 
-// app.get("/single-movie/:name", (req, res)=>{
-// 	const foundMovie = favoriteMovieList.find((movie)=>{
-// 		return movie.title === req.params.name
-// 	})
-
-// 	res.json({
-// 		success: true,
-// 		foundMovie : foundMovie
-// 	})
-// })
 
 app.get("/single-movie/:titleToFind", (req, res)=>{
 
@@ -111,19 +122,31 @@ app.put("/update-movie/:titleToUpdate", (req, res)=> {
     let updatedMovie ={};
 
 
-    if(req.body.title !== undefined){
+    if(req.body.title !== undefined && typeof(req.body.title) === "string"){
         updatedMovie.title = req.body.title;
     }else{
+        res.json({
+            success: false,
+            message: "Title must be a string."
+        })
         updatedMovie.title = originalMovie.title
     }
-    if(req.body.starRating !== undefined){
+    if(req.body.starRating !== undefined && typeof(req.body.starRating) === "number"){
         updatedMovie.starRating = req.body.starRating;
     }else{
+        res.json({
+            success: false,
+            message: "Title must be a string."
+        })
         updatedMovie.starRating = originalMovie.starRating
     }
-    if(req.body.isRecommended !== undefined){
+    if(req.body.isRecommended !== undefined && typeof(req.body.isRecommended) === "boolean"){
         updatedMovie.isRecommended = req.body.isRecommended;
     }else{
+        res.json({
+            success: false,
+            message: "Title must be a string."
+        })
         updatedMovie.isRecommended = originalMovie.isRecommended
     }
     updatedMovie.createdAt = originalMovie.createdAt
